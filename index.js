@@ -23,8 +23,9 @@ const validateEmail = (email) => {
   }
 };
 
-// Array of questions for user
-const questions = [
+// Array of questions for Manager
+
+const managerQuestions = [
   {
     type: "input",
     name: "managerName",
@@ -48,10 +49,13 @@ const questions = [
   },
   {
     type: "checkbox",
-    name: "manageroOptions",
+    name: "managerOptions",
     message: "Please select which action you would like to perform.",
     choices: ["Add an engineer", "Add an intern", "Finish building the team"],
   },
+];
+
+const engineerQuestions = [
   {
     type: "input",
     name: "engineerName",
@@ -73,6 +77,9 @@ const questions = [
     name: "engineerGitHub",
     message: "Please enter the engineer's GitHub username.",
   },
+];
+
+const internQuestions = [
   {
     type: "input",
     name: "internName",
@@ -97,36 +104,51 @@ const questions = [
 ];
 
 // Function to prompt user
-const promptUser = () => {
+const promptUser = (questions) => {
   return inquirer.prompt(questions);
 };
 
 // Function to write to HTML
 const init = async () => {
   try {
-    const answers = await promptUser();
+    const managerAnswers = await promptUser(managerQuestions);
 
-    // Create team member variables based on user input
+    // Create manager based on user input
     const manager = new Manager(
-      answers.managerName,
-      answers.managerId,
-      answers.managerEmail,
-      answers.officeNumber
-    );
-    const engineer = new Engineer(
-      answers.engineerName,
-      answers.engineerId,
-      answers.engineerEmail,
-      answers.engineerGitHub
-    );
-    const intern = new Intern(
-      answers.internName,
-      answers.internId,
-      answers.internEmail,
-      answers.internSchool
+      managerAnswers.managerName,
+      managerAnswers.managerId,
+      managerAnswers.managerEmail,
+      managerAnswers.officeNumber
     );
 
-    const team = [manager, engineer, intern]; // create an array of team members
+    let engineer, intern;
+
+    if (managerAnswers.managerOptions.includes("Add an engineer")) {
+      const engineerAnswers = await promptUser(engineerQuestions);
+
+      // Create engineer based on manager's input
+      engineer = new Engineer(
+        engineerAnswers.engineerName,
+        engineerAnswers.engineerId,
+        engineerAnswers.engineerEmail,
+        engineerAnswers.engineerGitHub
+      );
+    } else if (managerAnswers.managerOptions.includes("Add an intern")) {
+      const internAnswers = await promptUser(internQuestions);
+
+      // Create intern based on manager's input
+      intern = new Intern(
+        internAnswers.internName,
+        internAnswers.internId,
+        internAnswers.internEmail,
+        internAnswers.internSchool
+      );
+      // If manager selects to finish building the team, return managerAnswers
+    } else {
+      return managerAnswers;
+    }
+
+    const team = [manager, engineer, intern].filter((member) => member); // create an array of team members
 
     const pageTemplate = render(team); // generate HTML page using the previously created team array
 
