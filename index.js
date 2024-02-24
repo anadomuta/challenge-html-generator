@@ -6,13 +6,10 @@ const path = require("path");
 const fs = require("fs");
 const util = require("util");
 const emailValidator = require("email-validator");
-
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
-
 const render = require("./src/page-template.js");
 const teamMembers = [];
-
 const writeFileAsync = util.promisify(fs.writeFile);
 
 // Function to validate user email address
@@ -24,7 +21,7 @@ const validateEmail = (email) => {
   }
 };
 
-// Array of questions for Manager
+// Array of questions for user
 const managerQuestions = [
   {
     type: "input",
@@ -102,12 +99,12 @@ const promptUser = (questions) => {
   return inquirer.prompt(questions);
 };
 
-// Function to add another employee
+// Function to add another employee after manager created
 const addAnotherEmployee = async () => {
   return await inquirer.prompt([
     {
       type: "list",
-      name: "managerOptions",
+      name: "addEmployee",
       message: "Would you like to add another employee?",
       choices: [
         "Yes, add an engineer.",
@@ -144,16 +141,17 @@ const createIntern = async () => {
 
 // Function to build team
 const buildTeam = async () => {
-  const addEmployeeAnswer = await addAnotherEmployee();
+  const addEmployeeAnswer = await addAnotherEmployee(); // await user input whether additional employees need to be added
 
-  if (addEmployeeAnswer.managerOptions.includes("Yes, add an engineer.")) {
+  // Push engineer to team members array if option selected
+  if (addEmployeeAnswer.addEmployee.includes("Yes, add an engineer.")) {
     const engineer = await createEngineer();
-
     teamMembers.push(engineer);
     await buildTeam();
-  } else if (addEmployeeAnswer.managerOptions.includes("Yes, add an intern.")) {
-    const intern = await createIntern();
 
+    // Push intern to team members array if option selected
+  } else if (addEmployeeAnswer.addEmployee.includes("Yes, add an intern.")) {
+    const intern = await createIntern();
     teamMembers.push(intern);
     await buildTeam();
   } else {
@@ -174,10 +172,9 @@ const init = async () => {
       managerAnswers.officeNumber
     );
 
-    // Add created manager to team members array
-    teamMembers.push(manager);
+    teamMembers.push(manager); // add created manager to team members' array
 
-    await buildTeam();
+    await buildTeam(); // call function to start building the team
 
     const pageTemplate = render(teamMembers); // generate HTML page using the previously created team array
 
