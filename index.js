@@ -11,6 +11,7 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./src/page-template.js");
+const teamMembers = [];
 
 const writeFileAsync = util.promisify(fs.writeFile);
 
@@ -24,7 +25,6 @@ const validateEmail = (email) => {
 };
 
 // Array of questions for Manager
-
 const managerQuestions = [
   {
     type: "input",
@@ -46,12 +46,6 @@ const managerQuestions = [
     type: "input",
     name: "officeNumber",
     message: "Please enter your office number.",
-  },
-  {
-    type: "checkbox",
-    name: "managerOptions",
-    message: "Please select which action you would like to perform.",
-    choices: ["Add an engineer", "Add an intern", "Finish building the team"],
   },
 ];
 
@@ -108,6 +102,65 @@ const promptUser = (questions) => {
   return inquirer.prompt(questions);
 };
 
+// Function to add another employee
+const addAnotherEmployee = async () => {
+  return await inquirer.prompt([
+    {
+      type: "list",
+      name: "managerOptions",
+      message: "Would you like to add another employee?",
+      choices: [
+        "Yes, add an engineer.",
+        "Yes, add an intern.",
+        "No, finish building the team.",
+      ],
+    },
+  ]);
+};
+
+// Function to create engineer
+const createEngineer = async () => {
+  const engineerAnswers = await promptUser(engineerQuestions);
+
+  return new Engineer(
+    engineerAnswers.engineerName,
+    engineerAnswers.engineerId,
+    engineerAnswers.engineerEmail,
+    engineerAnswers.engineerGitHub
+  );
+};
+
+// Function to create intern
+const createIntern = async () => {
+  const internAnswers = await promptUser(internQuestions);
+
+  return new Intern(
+    internAnswers.internName,
+    internAnswers.internId,
+    internAnswers.internEmail,
+    internAnswers.internSchool
+  );
+};
+
+// Function to build team
+const buildTeam = async () => {
+  const addEmployeeAnswer = await addAnotherEmployee();
+
+  if (addEmployeeAnswer.managerOptions.includes("Yes, add an engineer.")) {
+    const engineer = await createEngineer();
+
+    teamMembers.push(engineer);
+    await buildTeam();
+  } else if (addEmployeeAnswer.managerOptions.includes("Yes, add an intern.")) {
+    const intern = await createIntern();
+
+    teamMembers.push(intern);
+    await buildTeam();
+  } else {
+    return;
+  }
+};
+
 // Function to write to HTML
 const init = async () => {
   try {
@@ -121,36 +174,12 @@ const init = async () => {
       managerAnswers.officeNumber
     );
 
-    let engineer, intern;
+    // Add created manager to team members array
+    teamMembers.push(manager);
 
-    if (managerAnswers.managerOptions.includes("Add an engineer")) {
-      const engineerAnswers = await promptUser(engineerQuestions);
+    await buildTeam();
 
-      // Create engineer based on manager's input
-      engineer = new Engineer(
-        engineerAnswers.engineerName,
-        engineerAnswers.engineerId,
-        engineerAnswers.engineerEmail,
-        engineerAnswers.engineerGitHub
-      );
-    } else if (managerAnswers.managerOptions.includes("Add an intern")) {
-      const internAnswers = await promptUser(internQuestions);
-
-      // Create intern based on manager's input
-      intern = new Intern(
-        internAnswers.internName,
-        internAnswers.internId,
-        internAnswers.internEmail,
-        internAnswers.internSchool
-      );
-      // If manager selects to finish building the team, return managerAnswers
-    } else {
-      return managerAnswers;
-    }
-
-    const team = [manager, engineer, intern].filter((member) => member); // create an array of team members
-
-    const pageTemplate = render(team); // generate HTML page using the previously created team array
+    const pageTemplate = render(teamMembers); // generate HTML page using the previously created team array
 
     // Creates 'output' directory if it doesn't exist
     if (!fs.existsSync(`output`)) {
