@@ -8,15 +8,15 @@ The project represents an application that allows users to take in information a
 
 ## Usage
 
-To generate a HTML file, open your terminal, run the command `node index.js` and answer the prompts.
+- To generate a HTML file, open your terminal, run the command `node index.js` and answer the prompts.
 
-The user is then prompted to enter the **team manager**'s name, employee ID, email address, and office number.
+- The user is then prompted to enter the **team manager**'s name, employee ID, email address, and office number.
 
-When a user enters those requirements, the user is presented with a menu with the option to add an engineer, add an intern or finish building the team.
+- When a user enters those requirements, the user is presented with a menu with the option to add an engineer, add an intern or finish building the team.
 
-When a user selects the **engineer** option, the user is prompted to enter the following and then taken back to the menu: engineer's name, ID, email, and GitHub username.
+- When a user selects the **engineer** option, the user is prompted to enter the following and then taken back to the menu: engineer's name, ID, email, and GitHub username.
 
-When a user selects the **intern** option, the user is prompted to enter the following and then taken back to the menu: intern’s name, ID, email, and school.
+- When a user selects the **intern** option, the user is prompted to enter the following and then taken back to the menu: intern’s name, ID, email, and school.
 
 The screenshots below display an overview of a sample generated HTML.
 
