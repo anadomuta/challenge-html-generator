@@ -37,25 +37,25 @@ const managerQuestions = [
   {
     type: "input",
     name: "managerName",
-    message: "Please enter the manager's first and last name.",
+    message: "Please enter your first and last name.",
     validate: validateName,
   },
   {
     type: "input",
     name: "managerId",
-    message: "Please enter the manager's employee id.",
+    message: "Please enter your employee id.",
     validate: validateNumber,
   },
   {
     type: "input",
     name: "managerEmail",
-    message: "Please enter the manager's email address.",
+    message: "Please enter your email address.",
     validate: validateEmail,
   },
   {
     type: "input",
     name: "officeNumber",
-    message: "Please enter the manager's office number.",
+    message: "Please enter your office number.",
     validate: validateNumber,
   },
 ];
