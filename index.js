@@ -12,13 +12,24 @@ const render = require("./src/page-template.js");
 const teamMembers = [];
 const writeFileAsync = util.promisify(fs.writeFile);
 
-// Function to validate user email address
+// Function to validate email address input
 const validateEmail = (email) => {
-  if (emailValidator.validate(email)) {
-    return true;
-  } else {
-    return "Please enter a valid email address.";
-  }
+  return emailValidator.validate(email)
+    ? true
+    : "Please enter a valid email address.";
+};
+
+// Function to validate numeric input
+const validateNumber = (num) => {
+  return !isNaN(parseInt(num)) || "" ? true : "Please type in a number.";
+};
+
+// Function to validate name input
+const validateName = (str) => {
+  let letters = /^[A-Za-z]+$/;
+  return str !== "" && letters.test(str)
+    ? true
+    : "Please type in a valid name.";
 };
 
 // Array of questions for user
@@ -26,23 +37,26 @@ const managerQuestions = [
   {
     type: "input",
     name: "managerName",
-    message: "Please enter your name.",
+    message: "Please enter the manager's name.",
+    validate: validateName,
   },
   {
     type: "input",
     name: "managerId",
-    message: "Please enter your employee id.",
+    message: "Please enter the manager's employee id.",
+    validate: validateNumber,
   },
   {
     type: "input",
     name: "managerEmail",
-    message: "Please enter your email address.",
+    message: "Please enter the manager's email address.",
     validate: validateEmail,
   },
   {
     type: "input",
     name: "officeNumber",
-    message: "Please enter your office number.",
+    message: "Please enter the manager's office number.",
+    validate: validateNumber,
   },
 ];
 
@@ -51,11 +65,13 @@ const engineerQuestions = [
     type: "input",
     name: "engineerName",
     message: "Please enter the engineer's name.",
+    validate: validateName,
   },
   {
     type: "input",
     name: "engineerId",
     message: "Please enter the engineer's id.",
+    validate: validateNumber,
   },
   {
     type: "input",
@@ -67,6 +83,7 @@ const engineerQuestions = [
     type: "input",
     name: "engineerGitHub",
     message: "Please enter the engineer's GitHub username.",
+    validate: validateName,
   },
 ];
 
@@ -75,11 +92,13 @@ const internQuestions = [
     type: "input",
     name: "internName",
     message: "Please enter the intern's name.",
+    validate: validateName,
   },
   {
     type: "input",
     name: "internId",
     message: "Please enter the intern's id.",
+    validate: validateNumber,
   },
   {
     type: "input",
@@ -91,6 +110,7 @@ const internQuestions = [
     type: "input",
     name: "internSchool",
     message: "Please enter the intern's school.",
+    validate: validateName,
   },
 ];
 
