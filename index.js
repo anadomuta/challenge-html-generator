@@ -26,7 +26,7 @@ const validateNumber = (num) => {
 
 // Function to validate name input
 const validateName = (str) => {
-  let letters = /^[A-Za-z]+$/;
+  let letters = /^[a-zA-Z]+ [a-zA-Z]+$/;
   return str !== "" && letters.test(str)
     ? true
     : "Please type in a valid name.";
@@ -37,7 +37,7 @@ const managerQuestions = [
   {
     type: "input",
     name: "managerName",
-    message: "Please enter the manager's name.",
+    message: "Please enter the manager's first and last name.",
     validate: validateName,
   },
   {
@@ -64,7 +64,7 @@ const engineerQuestions = [
   {
     type: "input",
     name: "engineerName",
-    message: "Please enter the engineer's name.",
+    message: "Please enter the engineer's first and last name.",
     validate: validateName,
   },
   {
@@ -83,7 +83,6 @@ const engineerQuestions = [
     type: "input",
     name: "engineerGitHub",
     message: "Please enter the engineer's GitHub username.",
-    validate: validateName,
   },
 ];
 
@@ -91,7 +90,7 @@ const internQuestions = [
   {
     type: "input",
     name: "internName",
-    message: "Please enter the intern's name.",
+    message: "Please enter the intern's first and last name.",
     validate: validateName,
   },
   {
